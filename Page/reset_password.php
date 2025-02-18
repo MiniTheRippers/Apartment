@@ -50,22 +50,58 @@ if (isset($_GET['token'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รีเซ็ตรหัสผ่าน</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f4f7fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="reset-password-container">
-        <h2>รีเซ็ตรหัสผ่าน</h2>
-        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
-        <form action="reset_password.php?token=<?php echo $_GET['token']; ?>" method="post">
-            <label for="password">รหัสผ่านใหม่:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <label for="confirm_password">ยืนยันรหัสผ่านใหม่:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-            
-            <button type="submit">รีเซ็ตรหัสผ่าน</button>
+    <div class="container">
+        <h3 class="text-center mb-4">🔑 รีเซ็ตรหัสผ่าน</h3>
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger text-center"><?php echo $error; ?></div>
+        <?php endif; ?>
+        
+        <form action="reset_password.php?token=<?php echo htmlspecialchars($_GET['token']); ?>" method="post">
+            <div class="mb-3">
+                <label for="password" class="form-label">รหัสผ่านใหม่:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">ยืนยันรหัสผ่านใหม่:</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">รีเซ็ตรหัสผ่าน</button>
         </form>
-        <p>กลับไปที่ <a href="login.php">เข้าสู่ระบบ</a></p>
+
+        <div class="text-center mt-3">
+            <a href="login.php">🔙 กลับไปที่เข้าสู่ระบบ</a>
+        </div>
     </div>
 </body>
 </html>
