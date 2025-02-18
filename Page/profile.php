@@ -26,7 +26,7 @@ $user = $result->fetch_assoc();
 </head>
 <body>
     <div class="container mt-4">
-    <a href="Dashboard.php" class="btn btn-primary profile-btn">หน้าเเรก</a><a href="Dashboard.php" class="btn btn-primary profile-btn">หน้าเเรก</a>
+    <a href="Dashboard.php" class="btn btn-primary profile-btn">หน้าเเรก</a>
         <h2 class="text-center">📌 ข้อมูลโปรไฟล์</h2>
         <div class="card mx-auto" style="width: 400px;">
             <img src="<?php echo $user['profile_pic'] ?? 'image/default_profile.jpg'; ?>" class="card-img-top" alt="โปรไฟล์">
