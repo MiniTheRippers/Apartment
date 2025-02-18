@@ -2,16 +2,14 @@
 session_start();
 include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php';
 
-// ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
-$room_id = $_GET['room_id']; // รับ room_id จาก URL
+$room_id = $_GET['room_id'];
 
-// ตรวจสอบว่าผู้ใช้เป็นผู้เช่าห้องนี้หรือไม่
 $stmt = $conn->prepare("SELECT * FROM rooms WHERE room_id = ? AND user_id = ?");
 $stmt->bind_param("ii", $room_id, $user_id);
 $stmt->execute();
@@ -22,13 +20,11 @@ if ($result->num_rows == 0) {
     exit();
 }
 
-// บันทึกรีวิว
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $rating = $_POST['rating'];
     $comment = $_POST['comment'];
-    $review_date = date('Y-m-d'); // วันที่รีวิว
+    $review_date = date('Y-m-d');
 
-    // บันทึกรีวิวลงฐานข้อมูล
     $insert_stmt = $conn->prepare("INSERT INTO reviews (tenant_id, rating, comment, review_date) VALUES (?, ?, ?, ?)");
     $insert_stmt->bind_param("iiss", $user_id, $rating, $comment, $review_date);
 
