@@ -59,20 +59,19 @@ if (isset($_GET['delete_service'])) {
 </head>
 <body>
     <div class="container mt-4">
-        <!-- แสดงข้อมูลโปรไฟล์ -->
         <?php if (isset($user)) : ?>
             <div class="profile-info mb-3">
                 <h4>โปรไฟล์ผู้ใช้</h4>
                 <p>ชื่อ: <?php echo htmlspecialchars($user['username']); ?></p>
                 <p>อีเมล: <?php echo htmlspecialchars($user['email']); ?></p>
                 <a href="profile.php" class="btn btn-primary profile-btn">แก้ไขโปรไฟล์</a>
+                <a href="login.php" class="btn btn-primary profile-btn">ล็อกเอ้า</a>
             </div>
         <?php endif; ?>
 
         <h2 class="text-center">📌 รายการห้องพัก</h2>
         <div class="row">
             <?php
-            // ดึงข้อมูลห้องพัก
             $stmt = $conn->prepare("SELECT * FROM rooms");
             $stmt->execute();
             $result = $stmt->get_result();
@@ -82,7 +81,6 @@ if (isset($_GET['delete_service'])) {
                     $statusColor = ($row['status'] == 'ว่าง') ? 'bg-success' : 'bg-danger';
                     $rentButton = ($row['status'] == 'ว่าง') ? "<a href='rent_room.php?room_id={$row['room_id']}' class='btn btn-success' onclick='return confirm(\"คุณแน่ใจหรือไม่ว่าต้องการเช่าห้องนี้?\");'>เช่าห้อง</a>" : "";
 
-                    // ตรวจสอบว่าผู้ใช้ที่ล็อกอินเป็นผู้เช่าห้องนี้หรือไม่
                     $editButton = "";
                     $reviewButton = "";
                     if ($row['status'] == 'มีคนเช่า' && $row['user_id'] == $user_id) {
