@@ -56,16 +56,60 @@ if (isset($_GET['delete_service'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ห้องพัก</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .profile-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ระบบจัดการห้องพัก</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">หน้าหลัก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.php">โปรไฟล์</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">ล็อกเอ้า</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container mt-4">
         <?php if (isset($user)) : ?>
             <div class="profile-info mb-3">
                 <h4>โปรไฟล์ผู้ใช้</h4>
                 <p>ชื่อ: <?php echo htmlspecialchars($user['username']); ?></p>
                 <p>อีเมล: <?php echo htmlspecialchars($user['email']); ?></p>
-                <a href="profile.php" class="btn btn-primary profile-btn">แก้ไขโปรไฟล์</a>
-                <a href="login.php" class="btn btn-primary profile-btn">ล็อกเอ้า</a>
             </div>
         <?php endif; ?>
 
@@ -103,8 +147,6 @@ if (isset($_GET['delete_service'])) {
                             </div>
                         </div>
                     </div>";
-
-                
                 }
             } else {
                 echo "<p class='text-center'>ไม่มีข้อมูลห้องพัก</p>";
@@ -113,6 +155,15 @@ if (isset($_GET['delete_service'])) {
             ?>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 ระบบจัดการห้องพัก. สงวนลิขสิทธิ์.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 <?php
