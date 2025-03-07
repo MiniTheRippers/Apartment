@@ -1,12 +1,22 @@
 <?php
 session_start();
-include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php'; // ไฟล์เชื่อมต่อฐานข้อมูล
+include '../DB/db_connect.php';
+
+// Regenerate session ID to prevent session fixation
+if (!isset($_SESSION['user_id'])) {
+    session_regenerate_id(true);
+}
+
+// Redirect if already logged in
+if (isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php"); // or another appropriate page
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // ค้นหาผู้ใช้จากฐานข้อมูล
     $stmt = $conn->prepare("SELECT user_id, password_hash, role FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -19,20 +29,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $password_hash)) {
             $_SESSION['user_id'] = $user_id;
             $_SESSION['username'] = $username;
-            $_SESSION['role'] = $role;  // Store the role in the session
+            $_SESSION['role'] = $role;
 
-            // Check role and redirect accordingly
             if ($role == 'tenant') {
-                header("Location: dashboard.php"); // Go to tenant dashboard
+                header("Location: dashboard.php");
             } else if ($role == 'admin' || $role == 'employee') {
-                header("Location: crudadmin.php"); // Go to admin/employee CRUD page
+                header("Location: admin_dashboard.php");
             }
             exit();
         } else {
-            $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+            $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"; // Incorrect username or password
         }
     } else {
-        $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+        $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"; // Incorrect username or password
     }
     $stmt->close();
 }

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php';
+include '../DB/db_connect.php';
 
 // ตรวจสอบว่าผู้ใช้ล็อกอินหรือยัง
 if (!isset($_SESSION['user_id'])) {

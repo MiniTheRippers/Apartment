@@ -2,13 +2,13 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'C:\xampp\htdocs\LabApartment\vendor\autoload.php'; // โหลด PHPMailer
+require 'C:\xamppNew\htdocs\LabApartment\vendor\autoload.php'; // โหลด PHPMailer
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
 
     // เชื่อมต่อกับฐานข้อมูล
-    include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php';
+    include '../DB/db_connect.php';
 
     $stmt = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);

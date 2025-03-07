@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php'; // เชื่อมต่อฐานข้อมูล
+include '../DB/db_connect.php';
 
 if (isset($_GET['token'])) {
     $token = $_GET['token'];

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php';
+include '../DB/db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $comment = $_POST['comment'];
     $review_date = date('Y-m-d');
 
-    $insert_stmt = $conn->prepare("INSERT INTO reviews (tenant_id, rating, comment, review_date) VALUES (?, ?, ?, ?)");
+    $insert_stmt = $conn->prepare("INSERT INTO reviews (user_id, rating, comment, review_date) VALUES (?, ?, ?, ?)");
     $insert_stmt->bind_param("iiss", $user_id, $rating, $comment, $review_date);
 
     if ($insert_stmt->execute()) {

@@ -1,6 +1,8 @@
 <?php
+include '../DB/db_connect.php';
+
 session_start(); // เริ่ม session เพื่อดึงข้อมูลผู้ใช้
-include 'C:\xampp\htdocs\LabApartment\DB\db_connect.php';
+
 
 // ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่
 if (!isset($_SESSION['user_id'])) {
@@ -16,38 +18,6 @@ $stmt_user->execute();
 $result_user = $stmt_user->get_result();
 $user = $result_user->fetch_assoc();
 $stmt_user->close();
-
-// ฟังก์ชันเลือกบริการเสริม
-if (isset($_POST['add_service'])) {
-    $service_id = $_POST['service_id'];
-    $room_id = $_POST['room_id'];
-
-    // ตรวจสอบว่าบริการเสริมนี้ยังไม่ได้ถูกเลือก
-    $stmt_check = $conn->prepare("SELECT * FROM tenant_services WHERE tenant_id = ? AND service_id = ?");
-    $stmt_check->bind_param("ii", $user_id, $service_id);
-    $stmt_check->execute();
-    $result_check = $stmt_check->get_result();
-
-    if ($result_check->num_rows == 0) {
-        // เพิ่มบริการเสริม
-        $stmt_add = $conn->prepare("INSERT INTO tenant_services (tenant_id, service_id) VALUES (?, ?)");
-        $stmt_add->bind_param("ii", $user_id, $service_id);
-        $stmt_add->execute();
-        $stmt_add->close();
-    }
-    $stmt_check->close();
-}
-
-// ฟังก์ชันลบบริการเสริม
-if (isset($_GET['delete_service'])) {
-    $service_id = $_GET['delete_service'];
-
-    // ลบบริการเสริม
-    $stmt_delete = $conn->prepare("DELETE FROM tenant_services WHERE tenant_id = ? AND service_id = ?");
-    $stmt_delete->bind_param("ii", $user_id, $service_id);
-    $stmt_delete->execute();
-    $stmt_delete->close();
-}
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -97,7 +67,7 @@ if (isset($_GET['delete_service'])) {
                         <a class="nav-link" href="profile.php">โปรไฟล์</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.php">ล็อกเอ้า</a>
+                        <a class="nav-link" href="logout.php">ล็อกเอ้า</a>
                     </li>
                 </ul>
             </div>
@@ -123,7 +93,7 @@ if (isset($_GET['delete_service'])) {
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $statusColor = ($row['status'] == 'ว่าง') ? 'bg-success' : 'bg-danger';
-                    $rentButton = ($row['status'] == 'ว่าง') ? "<a href='rent_room.php?room_id={$row['room_id']}' class='btn btn-success' onclick='return confirm(\"คุณแน่ใจหรือไม่ว่าต้องการเช่าห้องนี้?\");'>เช่าห้อง</a>" : "";
+                    $rentButton = ($row['status'] == 'ว่าง') ? "<a href='#' class='btn btn-success' data-bs-toggle='modal' data-bs-target='#confirmModal{$row['room_id']}'>เช่าห้อง</a>" : "";
 
                     $editButton = "";
                     $reviewButton = "";
@@ -140,13 +110,35 @@ if (isset($_GET['delete_service'])) {
                                 <h5 class='card-title'>ห้อง {$row['room_number']}</h5>
                                 <p class='card-text'>ประเภท: {$row['room_type']}</p>
                                 <p class='card-text'>ราคา: {$row['rent_price']} บาท</p>
-                                <span class='badge {$statusColor}'>{$row['status']}</span><br>
+                                <span class='badge {$statusColor}'>{$row['status']}</span><br> 
                                 {$rentButton}
                                 {$editButton}
                                 {$reviewButton}
                             </div>
                         </div>
                     </div>";
+
+                    // Modal สำหรับการยืนยันการเช่า
+                    if ($row['status'] == 'ว่าง') {
+                        echo "
+                        <div class='modal fade' id='confirmModal{$row['room_id']}' tabindex='-1' role='dialog' aria-labelledby='confirmModalLabel{$row['room_id']}' aria-hidden='true'>
+                            <div class='modal-dialog' role='document'>
+                                <div class='modal-content'>
+                                    <div class='modal-header'>
+                                        <h5 class='modal-title' id='confirmModalLabel{$row['room_id']}'>ยืนยันการเช่าห้อง</h5>
+                                        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                    </div>
+                                    <div class='modal-body'>
+                                        คุณแน่ใจหรือไม่ว่าต้องการเช่าห้องนี้?
+                                    </div>
+                                    <div class='modal-footer'>
+                                        <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>ยกเลิก</button>
+                                        <a href='rent_room.php?room_id={$row['room_id']}' class='btn btn-success'>ยืนยัน</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>";
+                    }
                 }
             } else {
                 echo "<p class='text-center'>ไม่มีข้อมูลห้องพัก</p>";
