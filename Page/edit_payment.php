@@ -17,13 +17,13 @@ if (isset($_GET['id'])) {
 
 if (isset($_POST['update_payment'])) {
     $payment_id = $_POST['payment_id'];
-    $tenant_id = $_POST['tenant_id'];
+    $user_id = $_POST['user_id'];
     $month_year = $_POST['month_year'];
     $amount = $_POST['amount'];
     $payment_date = $_POST['payment_date'];
     $status = $_POST['status'];
 
-    $sql = "UPDATE payments SET tenant_id='$tenant_id', month_year='$month_year', amount='$amount', payment_date='$payment_date', status='$status' WHERE payment_id='$payment_id'";
+    $sql = "UPDATE payments SET user_id='$user_id', month_year='$month_year', amount='$amount', payment_date='$payment_date', status='$status' WHERE payment_id='$payment_id'";
     if ($conn->query($sql) === TRUE) {
         header("Location: manage_payments.php");
     } else {
@@ -72,8 +72,8 @@ if (isset($_POST['update_payment'])) {
         <form method="post">
             <input type="hidden" name="payment_id" value="<?php echo $row['payment_id']; ?>">
             <div class="mb-3">
-                <label for="tenant_id" class="form-label">Tenant ID</label>
-                <input type="text" class="form-control" id="tenant_id" name="tenant_id" value="<?php echo $row['tenant_id']; ?>" required>
+                <label for="user_id" class="form-label">User ID</label>
+                <input type="text" class="form-control" id="user_id" name="user_id" value="<?php echo $row['user_id']; ?>" required>
             </div>
             <div class="mb-3">
                 <label for="month_year" class="form-label">Month-Year</label>
