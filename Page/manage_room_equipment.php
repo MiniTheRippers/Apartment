@@ -8,6 +8,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+// ดึงข้อมูลห้องทั้งหมด
+$rooms_sql = "SELECT room_id FROM rooms";
+$rooms_result = $conn->query($rooms_sql);
+
 // CRUD Operations
 
 // Create
@@ -77,10 +81,17 @@ if (isset($_GET['delete'])) {
         <a href="admin_dashboard.php" class="btn btn-secondary mb-4">กลับ</a>
 
         <!-- Form for adding new equipment -->
-        <form method="post" class="mb-4">
+        <form method="post" action="manage_room_equipment.php" class="mb-4">
             <div class="mb-3">
                 <label for="room_id" class="form-label">Room ID</label>
-                <input type="text" class="form-control" id="room_id" name="room_id" required>
+                <select class="form-control" id="room_id" name="room_id" required>
+                    <option value="">เลือกห้อง</option>
+                    <?php while($room = $rooms_result->fetch_assoc()): ?>
+                        <option value="<?php echo htmlspecialchars($room['room_id']); ?>">
+                            <?php echo htmlspecialchars($room['room_id']); ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="equipment_name" class="form-label">Equipment Name</label>
@@ -89,6 +100,7 @@ if (isset($_GET['delete'])) {
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-control" id="status" name="status" required>
+                    <option value="">เลือกสถานะ</option>
                     <option value="ใช้งานได้">ใช้งานได้</option>
                     <option value="เสียหาย">เสียหาย</option>
                     <option value="ต้องเปลี่ยน">ต้องเปลี่ยน</option>
