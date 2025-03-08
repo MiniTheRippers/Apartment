@@ -8,17 +8,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+// ดึงข้อมูลผู้เช่าทั้งหมด
+$tenants_sql = "SELECT tenant_id, name FROM tenants";
+$tenants_result = $conn->query($tenants_sql);
+
 // CRUD Operations
 
 // Create
 if (isset($_POST['add_payment'])) {
-    $tenant_id = $_POST['tenant_id'];
+    $user_id = $_POST['user_id'];
     $month_year = $_POST['month_year'];
     $amount = $_POST['amount'];
     $payment_date = $_POST['payment_date'];
     $status = $_POST['status'];
 
-    $sql = "INSERT INTO payments (tenant_id, month_year, amount, payment_date, status) VALUES ('$tenant_id', '$month_year', '$amount', '$payment_date', '$status')";
+    $sql = "INSERT INTO payments (user_id, month_year, amount, payment_date, status) VALUES ('$user_id', '$month_year', '$amount', '$payment_date', '$status')";
     if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {
@@ -31,7 +35,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 // Read
 if (!empty($search)) {
-    $sql = "SELECT * FROM payments WHERE tenant_id LIKE '%$search%' OR month_year LIKE '%$search%' OR status LIKE '%$search%'";
+    $sql = "SELECT * FROM payments WHERE user_id LIKE '%$search%' OR month_year LIKE '%$search%' OR status LIKE '%$search%'";
 } else {
     $sql = "SELECT * FROM payments";
 }
@@ -40,13 +44,13 @@ $result = $conn->query($sql);
 // Update
 if (isset($_POST['update_payment'])) {
     $payment_id = $_POST['payment_id'];
-    $tenant_id = $_POST['tenant_id'];
+    $user_id = $_POST['user_id'];
     $month_year = $_POST['month_year'];
     $amount = $_POST['amount'];
     $payment_date = $_POST['payment_date'];
     $status = $_POST['status'];
 
-    $sql = "UPDATE payments SET tenant_id='$tenant_id', month_year='$month_year', amount='$amount', payment_date='$payment_date', status='$status' WHERE payment_id='$payment_id'";
+    $sql = "UPDATE payments SET user_id='$user_id', month_year='$month_year', amount='$amount', payment_date='$payment_date', status='$status' WHERE payment_id='$payment_id'";
     if ($conn->query($sql) === TRUE) {
         echo "Record updated successfully";
     } else {
@@ -81,26 +85,34 @@ if (isset($_GET['delete'])) {
         <a href="admin_dashboard.php" class="btn btn-secondary mb-4">กลับ</a>
 
         <!-- Form for adding new payment -->
-        <form method="post" class="mb-4">
+        <form method="post" action="manage_payments.php" class="mb-4">
             <div class="mb-3">
-                <label for="tenant_id" class="form-label">Tenant ID</label>
-                <input type="text" class="form-control" id="tenant_id" name="tenant_id" required>
+                <label for="user_id" class="form-label">ผู้เช่า</label>
+                <select class="form-control" id="user_id" name="user_id" required>
+                    <option value="">เลือกผู้เช่า</option>
+                    <?php while($tenant = $tenants_result->fetch_assoc()): ?>
+                        <option value="<?php echo htmlspecialchars($tenant['tenant_id']); ?>">
+                            <?php echo htmlspecialchars($tenant['tenant_id'] . ' - ' . $tenant['name']); ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
             <div class="mb-3">
-                <label for="month_year" class="form-label">Month-Year</label>
-                <input type="text" class="form-control" id="month_year" name="month_year" required>
+                <label for="month_year" class="form-label">เดือน-ปี</label>
+                <input type="month" class="form-control" id="month_year" name="month_year" required>
             </div>
             <div class="mb-3">
-                <label for="amount" class="form-label">Amount</label>
-                <input type="text" class="form-control" id="amount" name="amount" required>
+                <label for="amount" class="form-label">จำนวนเงิน</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount" required>
             </div>
             <div class="mb-3">
-                <label for="payment_date" class="form-label">Payment Date</label>
+                <label for="payment_date" class="form-label">วันที่ชำระ</label>
                 <input type="date" class="form-control" id="payment_date" name="payment_date" required>
             </div>
             <div class="mb-3">
-                <label for="status" class="form-label">Status</label>
+                <label for="status" class="form-label">สถานะ</label>
                 <select class="form-control" id="status" name="status" required>
+                    <option value="">เลือกสถานะ</option>
                     <option value="จ่ายแล้ว">จ่ายแล้ว</option>
                     <option value="ยังไม่จ่าย">ยังไม่จ่าย</option>
                 </select>
@@ -121,7 +133,7 @@ if (isset($_GET['delete'])) {
             <thead>
                 <tr>
                     <th>Payment ID</th>
-                    <th>Tenant ID</th>
+                    <th>User ID</th>
                     <th>Month-Year</th>
                     <th>Amount</th>
                     <th>Payment Date</th>
@@ -134,7 +146,7 @@ if (isset($_GET['delete'])) {
                     <?php while($row = $result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $row['payment_id']; ?></td>
-                            <td><?php echo $row['tenant_id']; ?></td>
+                            <td><?php echo $row['user_id']; ?></td>
                             <td><?php echo $row['month_year']; ?></td>
                             <td><?php echo $row['amount']; ?></td>
                             <td><?php echo $row['payment_date']; ?></td>
